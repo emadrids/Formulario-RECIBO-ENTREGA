@@ -167,7 +167,7 @@
       </div>
       <div class="campo">
         <label>Fecha</label>
-        <input type="date" id="fecha" readonly>
+        <input type="date" id="fecha">
       </div>
     </div>
 
@@ -203,26 +203,31 @@
   </div>
 
   <script>
-    // Año actual
     const añoActual = new Date().getFullYear();
-
-    // Fecha por defecto
-    document.getElementById('fecha').valueAsDate = new Date();
+    const claveReinicio = "La1";
+    const claveLocalStorage = "form_numero_" + añoActual;
 
     const campos = ["cliente", "vendedor", "factura", "descripcion1", "descripcion2", "cajas", "bolsas"];
 
-    // Cargar datos
+    // Cargar datos al inicio
     window.onload = function () {
+      // Fecha automática editable
+      const fechaCampo = document.getElementById('fecha');
+      const hoy = new Date();
+      fechaCampo.valueAsDate = hoy;
+
+      // Cargar datos de campos
       campos.forEach(id => {
         const saved = localStorage.getItem("form_" + id);
         if (saved !== null) document.getElementById(id).value = saved;
       });
 
-      let numero = localStorage.getItem("form_numero") || "1";
+      // Cargar número del año actual
+      let numero = localStorage.getItem(claveLocalStorage) || "1";
       actualizarNumero(numero);
     };
 
-    // Guardar campos
+    // Guardar automáticamente cada campo
     campos.forEach(id => {
       const campo = document.getElementById(id);
       campo.addEventListener("input", () => {
@@ -230,18 +235,18 @@
       });
     });
 
-    // Mostrar número formateado
+    // Mostrar número en formato No. YYYY00000001
     function actualizarNumero(numero) {
       const parteNumerica = parseInt(numero).toString().padStart(8, '0');
       document.getElementById("numeroConsecutivo").textContent = "No. " + añoActual + parteNumerica;
     }
 
-    // Imprimir y aumentar consecutivo
+    // Imprimir e incrementar contador del año
     function imprimirYSumar() {
-      let numero = parseInt(localStorage.getItem("form_numero") || "1");
+      let numero = parseInt(localStorage.getItem(claveLocalStorage) || "1");
       window.print();
       numero++;
-      localStorage.setItem("form_numero", numero.toString());
+      localStorage.setItem(claveLocalStorage, numero.toString());
       actualizarNumero(numero);
     }
 
@@ -253,11 +258,11 @@
       });
     }
 
-    // Reiniciar con contraseña
+    // Reiniciar contador con contraseña
     function reiniciarContador() {
       const clave = prompt("Ingrese la contraseña para reiniciar:");
-      if (clave === "La1") {
-        localStorage.setItem("form_numero", "1");
+      if (clave === claveReinicio) {
+        localStorage.setItem(claveLocalStorage, "1");
         actualizarNumero(1);
         alert("Número reiniciado correctamente.");
       } else if (clave) {
