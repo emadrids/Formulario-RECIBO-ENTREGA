@@ -145,7 +145,7 @@
     </header>
 
     <!-- Número consecutivo -->
-    <div class="numero-consecutivo" id="numeroConsecutivo">No. 000000000001</div>
+    <div class="numero-consecutivo" id="numeroConsecutivo">No. 202500000001</div>
 
     <!-- Cliente y Vendedor -->
     <div class="fila">
@@ -203,12 +203,15 @@
   </div>
 
   <script>
-    // Asignar fecha automática
+    // Año actual
+    const añoActual = new Date().getFullYear();
+
+    // Fecha por defecto
     document.getElementById('fecha').valueAsDate = new Date();
 
     const campos = ["cliente", "vendedor", "factura", "descripcion1", "descripcion2", "cajas", "bolsas"];
 
-    // Cargar datos del formulario y número consecutivo
+    // Cargar datos
     window.onload = function () {
       campos.forEach(id => {
         const saved = localStorage.getItem("form_" + id);
@@ -219,7 +222,7 @@
       actualizarNumero(numero);
     };
 
-    // Guardar en tiempo real
+    // Guardar campos
     campos.forEach(id => {
       const campo = document.getElementById(id);
       campo.addEventListener("input", () => {
@@ -227,13 +230,13 @@
       });
     });
 
-    // Actualizar número con ceros
+    // Mostrar número formateado
     function actualizarNumero(numero) {
-      const padded = numero.toString().padStart(12, '0');
-      document.getElementById("numeroConsecutivo").textContent = "No. " + padded;
+      const parteNumerica = parseInt(numero).toString().padStart(8, '0');
+      document.getElementById("numeroConsecutivo").textContent = "No. " + añoActual + parteNumerica;
     }
 
-    // Imprimir e incrementar
+    // Imprimir y aumentar consecutivo
     function imprimirYSumar() {
       let numero = parseInt(localStorage.getItem("form_numero") || "1");
       window.print();
@@ -242,7 +245,7 @@
       actualizarNumero(numero);
     }
 
-    // Limpiar campos
+    // Limpiar formulario
     function limpiarFormulario() {
       campos.forEach(id => {
         document.getElementById(id).value = "";
@@ -250,11 +253,15 @@
       });
     }
 
-    // Reiniciar contador
+    // Reiniciar con contraseña
     function reiniciarContador() {
-      if (confirm("¿Seguro que deseas reiniciar el número consecutivo a 1?")) {
+      const clave = prompt("Ingrese la contraseña para reiniciar:");
+      if (clave === "La1") {
         localStorage.setItem("form_numero", "1");
         actualizarNumero(1);
+        alert("Número reiniciado correctamente.");
+      } else if (clave) {
+        alert("Contraseña incorrecta.");
       }
     }
   </script>
